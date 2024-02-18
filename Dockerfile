@@ -9,10 +9,6 @@ RUN set -eux; \
 # install requirements
 RUN pip install gkeepapi
 
-# volume to persist config
-RUN mkdir /gkeep_config
-VOLUME /gkeep_config
-
 # copy code
 COPY --chmod=500 docker_entrypoint.sh /
 COPY --chmod=400 update.py /
@@ -20,4 +16,4 @@ COPY --chmod=400 notify.py /
 
 # run
 ENV TZ="Australia/Sydney"
-ENTRYPOINT ["/docker_entrypoint.sh"]
+ENTRYPOINT [ "/docker_entrypoint.sh" ]
