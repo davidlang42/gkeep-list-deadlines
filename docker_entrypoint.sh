@@ -1,39 +1,43 @@
-#!/usr/bin/bash
-set -eu
+#!/bin/bash
+set -e
 
-# set user's password from environment variables
-if [ -z "${PLAYER_PASSWORD}" ]; then
-    echo "Must set environment variable PLAYER_PASSWORD"
+# check environment variables
+if [ -z "${GOOGLE_USERNAME}" ]; then
+    echo "Must set environment variable GOOGLE_USERNAME"
     exit 1 # failed
 fi
-echo "$PLAYER_USERNAME:$PLAYER_PASSWORD" | chpasswd
-
-set -x
-
-# install additional packages
-if ! [ -f install_packages ]
-then
-    echo "Creating default install_packages"
-    echo "# These packages are installed by apt-get on container start" > install_packages
-    chown ${PLAYER_USERNAME}:${PLAYER_USERNAME} install_packages
-    chmod 660 install_packages
+if [ -z "${GOOGLE_TOKEN}" ]; then
+    echo "Must set environment variable GOOGLE_TOKEN, see https://github.com/davidlang42/gkeep-login"
+    exit 1 # failed
 fi
-apt-get update
-for package in $(cat install_packages | grep -v '^ *#' | sed 's/#.*$//')
+if [ -z "${GOOGLE_KEEP_LIST_ID}" ]; then
+    echo "Must set environment variable GOOGLE_KEEP_LIST_ID"
+    exit 1 # failed
+fi
+
+set -u
+
+LAST_DATE=""
+while true
 do
-    apt-get install -y $package
+    THIS_DATE="$(date -d "00:00")"
+    if [ "$THIS_DATE" != "$LAST_DATE" ]
+    then
+        LAST_DATE="$THIS_DATE"
+        echo Running notify...
+        if python3 /notify.sh "$GOOGLE_USERNAME" "$GOOGLE_TOKEN" "$GOOGLE_KEEP_LIST_ID"
+        then
+            echo ...notify complete.
+        else
+            echo ...notify failed.
+        fi
+    fi
+    echo Running update...
+    if python3 /update.sh "$GOOGLE_USERNAME" "$GOOGLE_TOKEN" "$GOOGLE_KEEP_LIST_ID"
+    then
+        echo ...update complete.
+    else
+        echo ...update failed.
+    fi
+    sleep 300 # 5min
 done
-
-# run startup script
-if ! [ -f run_on_startup.sh ]
-then
-    echo "Creating default run_on_startup.sh"
-    echo "#!/usr/bin/bash" > run_on_startup.sh
-    echo "# This script is run (as root) on container start" >> run_on_startup.sh
-    chown ${PLAYER_USERNAME}:${PLAYER_USERNAME} run_on_startup.sh
-    chmod 770 run_on_startup.sh
-fi
-./run_on_startup.sh
-
-# start the ssh server
-/usr/sbin/sshd -D

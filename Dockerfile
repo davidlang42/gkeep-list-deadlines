@@ -1,32 +1,23 @@
 FROM ubuntu:latest
 
-# install tools
+# install python
 RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		openssh-server \
-		sudo bash nano git curl wget less htop zip unzip gzip jq iputils-ping \
-		python3 pip \
-		nodejs npm \
-		build-essential rustc cargo
+		bash python3 pip
 
-# create user
-ARG USERNAME=player
-RUN useradd -m $USERNAME && adduser $USERNAME sudo && usermod -s /usr/bin/bash $USERNAME
-RUN chown $USERNAME:$USERNAME /home/$USERNAME
-VOLUME /home/$USERNAME
+# install requirements
+RUN pip install gkeepapi
 
-# configure SSH
-RUN mkdir /var/run/sshd
-RUN echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
-RUN echo "AllowUsers $USERNAME" >> /etc/ssh/sshd_config
-RUN echo "PermitRootLogin no" >> /etc/ssh/sshd_config
-EXPOSE 22
+# volume to persist config
+RUN mkdir /gkeep_config
+VOLUME /gkeep_config
 
-# copy files
+# copy code
 COPY --chmod=500 docker_entrypoint.sh /
+COPY --chmod=400 update.py /
+COPY --chmod=400 notify.py /
 
 # run
-ENV PLAYER_USERNAME=${USERNAME}
-WORKDIR /home/$USERNAME
-ENTRYPOINT ["/docker_entrypoint.sh"] # requires environment var PLAYER_PASSWORD to be set
+ENV TZ="Australia/Sydney"
+ENTRYPOINT ["/docker_entrypoint.sh"]
