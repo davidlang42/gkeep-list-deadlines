@@ -62,9 +62,9 @@ function requestDelta(item, list_title) {
 }
 
 function sendRequestEmail(requests, list_title) {
-  var subject = list_title + " Deadline";
+  var subject = list_title + " deadline";
   var html = "<p>How long until these items are due?</p>";
-  html += "<table border=1 style='width: 200px; border-collapse: collapse;'>";
+  html += "<table border=1 style='border-collapse: collapse;'>";
   var app_url = ScriptApp.getService().getUrl();
   for (const item of requests) {
     var item_url = app_url + "?item=" + encodeURIComponent("^" + item + "$");
@@ -78,7 +78,7 @@ function sendRequestEmail(requests, list_title) {
     html += "</tr>";
   }
   html += "</table>";
-  GmailApp.sendEmail(EMAIL_ADDRESS, subject, "", { htmlBody: html });
+  GmailApp.sendEmail(EMAIL_ADDRESS, subject, "", { htmlBody: html }); //TODO make these emails group in threads 
 }
 
 function formatDate(d) {
