@@ -1,3 +1,5 @@
+const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
 function doLookup(e) {
   var item = e.parameter.item;
   if (!item) return doError(e, "No item set for lookup.");
@@ -10,9 +12,8 @@ function doLookup(e) {
     if (delta < 0) {
       return doSuccess("-"); // never due
     } else {
-      var d = new Date();
-      d.setDate(d.getDate() + delta);
-      return doSuccess(formatDate(d));
+      var due = new Date(Date.now() + MS_PER_DAY * delta);
+      return doSuccess(formatDate(due));
     }
   } else {
     // delta not found
