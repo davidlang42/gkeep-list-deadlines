@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<?
+//inputs: initial_item, initial_delta
+?>
+<base target="_top">
+<style>
+html {
+  font: 15px arial, sans-serif;
+}
+</style>
+<div id="ui">
+  <div id="UI_add" style="width:200px;padding-left:0px;padding-bottom:5px;">
+    <p>Item regex: <input type=text id="new_item" value="<?= initial_item ?>"></p>
+    <p>Due in days: <input type=number id="new_delta" value="<?= initial_delta ?>"></i>(0=Immediate, -1=Never)</i></p>
+    <input type=button onclick="addDelta()" value="Add">
+    <script>
+    function addDelta() {
+      var item = document.getElementById("new_item").value;
+      if (!item) {
+        alert("Item regex cannot be blank.");
+        return;
+      }
+      var delta = document.getElementById("new_delta").value;
+      if (!delta) {
+        alert("Due in days cannot be blank.");
+        return;
+      }
+      document.getElementById("UI_add").style.display = "none";
+      document.getElementById("list_result").innerHTML = "...";
+      google.script.run.withSuccessHandler(successAdd).withFailureHandler(failAdd).addDelta(item, delta);
+    }
+    function successAdd(cache) {
+      document.getElementById("new_item").value = "";
+      document.getElementById("new_delta").value = "";
+      document.getElementById("UI_add").style.display = "inherit";
+      successList(cache);
+    }
+    function failAdd(err) {
+      document.getElementById("list_result").innerHTML = "Error: " + err.message;
+      document.getElementById("UI_add").style.display = "inherit";
+    }
+    </script>
+  </div>
+  <div id="UI_list" style="width:200px;padding-left:0px;padding-top:5px;">
+    <p><span id="list_result">---</span></p>
+    <input type=button onclick="refreshList()" value="Refresh">
+    <script>
+    function refreshList() {
+      document.getElementById("list_result").innerHTML = "...";
+      google.script.run.withSuccessHandler(successList).withFailureHandler(failList).listDeltas();
+    }
+    function successList(cache) {
+      var html = "<table border=1 style='width: 200px; border-collapse: collapse;'>";
+      html += "<tr><td>Item regex</td><td>Due</td></tr>";
+      for (const item in cache) {
+        html += "<tr>";
+        html += "<td>" + item + "</td>";
+        const delta = cache[item];
+        if (delta < 0) {
+          html += "<td>Never</td>";
+        } else if (delta == 0) {
+          html += "<td>Immediate</td>";
+        } else if (delta == 1) {
+          html += "<td>In 1 day</td>";
+        } else {
+          html += "<td>In " + delta + " days</td>";
+        }
+        html += "<td><input type=button onclick='removeDelta(\"" + item + "\")' value='X'></td>";
+        html += "</tr>";
+      }
+      html += "</table>";
+      document.getElementById("list_result").innerHTML = html;
+    }
+    function failList(err) {
+      document.getElementById("list_result").innerHTML = "Error: " + err.message;
+    }
+    function removeDelta(item) {
+      if (!confirm("Are you sure you want to delete '" + item + "'?")) return;
+      document.getElementById("list_result").innerHTML = "...";
+      google.script.run.withSuccessHandler(successList).withFailureHandler(failList).removeDelta(item);
+    }
+    window.addEventListener('load', refreshList);
+    </script>
+    </p>
+  </div>
+<script>
+  function preventFormSubmit() {
+    var forms = document.querySelectorAll('form');
+    for (var i = 0; i < forms.length; i++) {
+      forms[i].addEventListener('submit', function(event) {
+        event.preventDefault();
+      });
+    }
+  }
+  preventFormSubmit();
+  window.addEventListener('load', preventFormSubmit);
+</script>

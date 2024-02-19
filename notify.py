@@ -1,8 +1,8 @@
 import sys
 # import gkeepapi
 
-if len(sys.argv) != 4:
-    print("Expected 3 args: GOOGLE_USERNAME, GOOGLE_TOKEN, GOOGLE_KEEP_LIST_ID")
+if len(sys.argv) != 5:
+    print("Expected 4 args: GOOGLE_USERNAME, GOOGLE_TOKEN, GOOGLE_KEEP_LIST_ID, GOOGLE_APPS_SCRIPT_URL")
     exit(1)
 
 # f = open("/gkeep_config/user.txt", "r")

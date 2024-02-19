@@ -13,6 +13,10 @@ if [ -z "${GOOGLE_KEEP_LIST_ID}" ]; then
     echo "Must set environment variable GOOGLE_KEEP_LIST_ID"
     exit 1
 fi
+if [ -z "${GOOGLE_APPS_SCRIPT_URL}" ]; then
+    echo "Must set environment variable GOOGLE_APPS_SCRIPT_URL"
+    exit 1
+fi
 
 set -u
 
@@ -24,7 +28,7 @@ do
     then
         LAST_DATE="$THIS_DATE"
         echo Running notify...
-        if python3 /notify.py "$GOOGLE_USERNAME" "$GOOGLE_TOKEN" "$GOOGLE_KEEP_LIST_ID"
+        if python3 /notify.py "$GOOGLE_USERNAME" "$GOOGLE_TOKEN" "$GOOGLE_KEEP_LIST_ID" "$GOOGLE_APPS_SCRIPT_URL"
         then
             echo ...notify complete.
         else
@@ -32,7 +36,7 @@ do
         fi
     fi
     echo Running update...
-    if python3 /update.py "$GOOGLE_USERNAME" "$GOOGLE_TOKEN" "$GOOGLE_KEEP_LIST_ID"
+    if python3 /update.py "$GOOGLE_USERNAME" "$GOOGLE_TOKEN" "$GOOGLE_KEEP_LIST_ID" "$GOOGLE_APPS_SCRIPT_URL"
     then
         echo ...update complete.
     else
