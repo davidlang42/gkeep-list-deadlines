@@ -71,7 +71,7 @@ for item in items:
             existing_due.append(due)
 
 # check if any are due today specifically
-now = datetime.now().strftime("%Y-%m-%d") #TODO fix timezone (this currently returns yesterday before 11am?)
+now = datetime.now().strftime("%Y-%m-%d")
 if now in existing_due:
     # something due today, send email via backend
     print("Sending due email")

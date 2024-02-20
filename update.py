@@ -101,7 +101,7 @@ note.sort_items(key=due_then_name)
 keep.sync()
 
 # check if any new due dates are already due
-now = datetime.now().strftime("%Y-%m-%d") #TODO fix timezone (this currently returns yesterday before 11am?)
+now = datetime.now().strftime("%Y-%m-%d")
 if any(due <= now for due in new_due):
     # something we just set is due already, we should notify immediately
     print("Sending due email")

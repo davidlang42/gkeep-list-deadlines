@@ -4,7 +4,7 @@ FROM ubuntu:latest
 RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		bash python3 pip
+		bash python3 pip tzdata
 
 # install requirements
 RUN pip install gkeepapi
