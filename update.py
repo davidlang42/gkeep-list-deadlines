@@ -12,10 +12,10 @@ def send_due_email(note):
     now = datetime.now().strftime("%Y-%m-%d")
     html += "<table border=1 style='border-collapse: collapse;'>"
     for item in note.unchecked:
-        item_html = "<td>" + item.text + "</td>" #TODO remove due date from the item title
         style = ''
         match = pattern.match(item.text)
         if match:
+            item_html = "<td>" + match.group(2) + "</td>"
             due = match.group(1)
             if due != "-":
                 item_html += "<td>" + due + "</td>"
@@ -27,6 +27,7 @@ def send_due_email(note):
                     style = 'font-weight: bold; color: red;'
         else:
             # due date not set yet
+            item_html = "<td>" + item.text + "</td>"
             style = 'font-style: italic;'
         html += "<tr style='" + style + "'>" + item_html + "</tr>"
     html += "</table>"
@@ -58,7 +59,7 @@ note = keep.get(list_id)
 items = note.unchecked
 
 # check for any items without a due date
-pattern = re.compile(r"^\s*\[([^\[\]]+)\]\s*\S+.*$")
+pattern = re.compile(r"^\s*\[([^\[\]]+)\]\s*(\S+.*)$")
 
 new_due = []
 for item in items:
