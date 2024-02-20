@@ -16,4 +16,5 @@ COPY --chmod=400 notify.py /
 
 # run
 ENV TZ="Australia/Sydney"
+ENV UPDATE_TIMEOUT=60
 ENTRYPOINT [ "/docker_entrypoint.sh" ]

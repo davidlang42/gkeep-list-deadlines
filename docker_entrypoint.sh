@@ -42,5 +42,5 @@ do
     else
         echo ...update failed.
     fi
-    sleep 300 # 5min
+    sleep "$UPDATE_TIMEOUT" # seconds
 done
