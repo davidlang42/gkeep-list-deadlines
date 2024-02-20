@@ -32,6 +32,11 @@ function setRequests(requests) {
   p.setProperty(REQUESTS_PROPERTY, JSON.stringify(requests));
 }
 
+function clearRequests() {
+  var p = PropertiesService.getScriptProperties();
+  p.setProperty(REQUESTS_PROPERTY, JSON.stringify([]));
+}
+
 function getRequestEmailThreadId() {
   var p = PropertiesService.getScriptProperties();
   return p.getProperty(REQUEST_EMAIL_THREAD_ID_PROPERTY);

@@ -11,7 +11,7 @@ function doGet(e) {
   } else if (Session.getActiveUser().getEmail() == EMAIL_ADDRESS) {
     return doAdmin(e);
   } else {
-    return doError(e, "Invalid action: " + action);
+    return ContentService.createTextOutput("");
   }
 }
 
