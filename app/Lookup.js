@@ -79,9 +79,12 @@ function sendRequestEmail(requests, list_title) {
   }
   html += "</table>";
   var thread_id = getRequestEmailThreadId();
-  if (thread_id) {
-    var thread = GmailApp.getThreadById(thread_id);//TODO handle the thread no longer existing
-    //TODO mark read & archive all existing messages in this thread
+  var thread = null;
+  if (thread_id) thread = GmailApp.getThreadById(thread_id);
+  if (thread) {
+    for (const msg of thread.getMessages()) {
+      msg.markRead();
+    }
     thread.reply("", { htmlBody: html });
   } else {
     GmailApp.sendEmail(EMAIL_ADDRESS, subject, "", { htmlBody: html });
