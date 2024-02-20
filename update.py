@@ -33,13 +33,24 @@ def send_due_email(note):
     html += "</table>"
     # send the email
     data = {}
-    data['title'] = note.title + " items due"
+    data['title'] = note.title + " DUE"
     data['html'] = html
     data['action'] = 'email'
     full_url = backend_url + '?' + urllib.parse.urlencode(data)
     with urllib.request.urlopen(full_url) as response:
         bytes = response.read()
         print(str(bytes, encoding='utf-8'))
+
+def due_then_name(item):
+    match = pattern.match(item.text)
+    if match:
+        due = match.group(1)
+        if due != "-":
+            return "a " + due.lower() + " " + match.group(2).lower()
+        else:
+            return "b " + match.group(2).lower()
+    else:
+        return "c " + item.text.lower()
 
 # cli args
 if len(sys.argv) != 5:
@@ -86,7 +97,7 @@ for item in items:
                 print("Due date unknown")
 
 # save changes to keep note
-note.sort_items() #TODO make sort actually work
+note.sort_items(key=due_then_name)
 keep.sync()
 
 # check if any new due dates are already due

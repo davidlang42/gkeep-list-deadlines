@@ -32,7 +32,7 @@ def send_due_email(note):
     html += "</table>"
     # send the email
     data = {}
-    data['title'] = note.title + " items due"
+    data['title'] = note.title + " DUE"
     data['html'] = html
     data['action'] = 'email'
     full_url = backend_url + '?' + urllib.parse.urlencode(data)
