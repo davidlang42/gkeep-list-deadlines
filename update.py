@@ -37,6 +37,7 @@ def send_due_email(note):
     data['html'] = html
     data['action'] = 'email'
     full_url = backend_url + '?' + urllib.parse.urlencode(data)
+    print("DEBUG: " + full_url)
     with urllib.request.urlopen(full_url) as response:
         bytes = response.read()
         print(str(bytes, encoding='utf-8'))
@@ -83,6 +84,7 @@ for item in items:
         data['action'] = 'lookup'
         data['list_title'] = note.title
         full_url = backend_url + '?' + urllib.parse.urlencode(data)
+        print("DEBUG: " + full_url)
         with urllib.request.urlopen(full_url) as response:
             bytes = response.read()
             due = str(bytes, encoding='utf-8')
