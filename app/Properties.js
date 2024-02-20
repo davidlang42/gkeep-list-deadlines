@@ -1,5 +1,6 @@
 const CACHE_PROPERTY = "cache";
 const REQUESTS_PROPERTY = "requests";
+const REQUEST_EMAIL_THREAD_ID_PROPERTY = "requestEmailThreadId";
 
 function getCache() {
   var p = PropertiesService.getScriptProperties();
@@ -29,4 +30,15 @@ function getRequests() {
 function setRequests(requests) {
   var p = PropertiesService.getScriptProperties();
   p.setProperty(REQUESTS_PROPERTY, JSON.stringify(requests));
+}
+
+function getRequestEmailThreadId() {
+  var p = PropertiesService.getScriptProperties();
+  return p.getProperty(REQUEST_EMAIL_THREAD_ID_PROPERTY);
+  
+}
+
+function setRequestEmailThreadId(thread_id) {
+  var p = PropertiesService.getScriptProperties();
+  p.setProperty(REQUEST_EMAIL_THREAD_ID_PROPERTY, thread_id);
 }

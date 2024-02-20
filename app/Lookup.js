@@ -62,7 +62,7 @@ function requestDelta(item, list_title) {
 }
 
 function sendRequestEmail(requests, list_title) {
-  var subject = list_title + " deadline";
+  var subject = list_title + " needs deadlines";
   var html = "<p>How long until these items are due?</p>";
   html += "<table border=1 style='border-collapse: collapse;'>";
   var app_url = ScriptApp.getService().getUrl();
@@ -78,7 +78,18 @@ function sendRequestEmail(requests, list_title) {
     html += "</tr>";
   }
   html += "</table>";
-  GmailApp.sendEmail(EMAIL_ADDRESS, subject, "", { htmlBody: html }); //TODO make these emails group in threads 
+  var thread_id = getRequestEmailThreadId();
+  if (thread_id) {
+    var thread = GmailApp.getThreadById(thread_id);//TODO handle the thread no longer existing
+    //TODO mark read & archive all existing messages in this thread
+    thread.reply("", { htmlBody: html });
+  } else {
+    GmailApp.sendEmail(EMAIL_ADDRESS, subject, "", { htmlBody: html });
+    var draft = GmailApp.createDraft(EMAIL_ADDRESS, subject, "", { htmlBody: html });
+    var msg = draft.send();
+    var thread = msg.getThread();
+    setRequestEmailThreadId(thread.getId());
+  }
 }
 
 function formatDate(d) {
